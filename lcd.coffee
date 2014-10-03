@@ -19,7 +19,7 @@ module.exports = (env) ->
 
   class LCDDisplayActionProvider extends env.actions.ActionProvider
   
-    constructor: (@framework, @lcd) ->
+    constructor: (@framework, @lcd, @pluginConfig) ->
       return
 
     parseAction: (input, context) =>
@@ -73,7 +73,7 @@ module.exports = (env) ->
             throw new Error("line must be between 1 and #{rows}")
 
           if line.length > cols
-            line = line.substring(0, cols)
+            line = line.substring(0, cols-1)
           else if line.length < cols
             line = line + " ".repeat(line.length - cols)
 
