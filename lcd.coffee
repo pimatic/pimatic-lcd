@@ -96,7 +96,7 @@ module.exports = (env) ->
     parseAction: (input, context) =>
 
       state = null
-      setState = (next, match) => state = (match.trim is "on") 
+      setState = (next, match) => state = (match.trim() is "on") 
 
       m = M(input, context)
         .match('turn ')
