@@ -12,7 +12,7 @@ module.exports = (env) ->
 
     init: (app, @framework, @config) =>
       lcd = new LCD(@config.bus, @config.address)
-      lcd.afterInit = lcd.init()
+      lcd.pendingOperation = lcd.init()
       @framework.ruleManager.addActionProvider(new LCDDisplayActionProvider @framework, lcd)
 
   class LCDDisplayActionProvider extends env.actions.ActionProvider
@@ -24,41 +24,50 @@ module.exports = (env) ->
 
       textTokens = null
       setText = (m, tokens) => textTokens = tokens
+      lineNumber = [ 1 ]
 
       m = M(input, context)
         .match('display ')
         .match('text ', optional: yes)
         .matchStringWithVars(setText)
         .match(" on lcd")
+        .match(" line ", (next) =>
+          next.matchNumericExpression( (next, tokens) =>
+            lineNumber = tokens
+            m = next
+          )
+        )
 
       if m.hadMatch()
         match = m.getFullMatch()
         assert Array.isArray(textTokens)
+        assert Array.isArray(lineNumber)
         return {
           token: match
           nextInput: input.substring(match.length)
           actionHandler: new LCDDisplayActionHandler(
-            @framework, textTokens, @lcd
+            @framework, @lcd, textTokens, lineNumber
           )
         }
             
 
   class LCDDisplayActionHandler extends env.actions.ActionHandler 
 
-    constructor: (@framework, @textTokens, @lcd) ->
+    constructor: (@framework, @lcd, @textTokens, @lineNumber) ->
 
     executeAction: (simulate, context) ->
       Promise.all( [
         @framework.variableManager.evaluateStringExpression(@textTokens)
-      ]).then( ([text]) =>
+        @framework.variableManager.evaluateNumericExpression(@lineNumber)
+      ]).then( ([text, line]) =>
         if simulate
           # just return a promise fulfilled with a description about what we would do.
-          return __("would display \"%s\" on lcd", text)
+          return __("would display \"%s\" on lcd line %s", text, line)
         else
-          return @lcd.afterInit
-            .then( => @lcd.setCursor(0, 0) )
+          return @lcd.pendingOperation = @lcd.pendingOperation
+            .then( => @lcd.setCursor(0, line) )
             .then( => @lcd.print(text) ).then( => 
-              return __("displaying \"%s\" on lcd", text) 
+              return __("displaying \"%s\" on lcd line %s", text, line) 
             )
       )
 
