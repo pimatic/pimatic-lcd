@@ -55,13 +55,6 @@ module.exports = (env) ->
           # just return a promise fulfilled with a description about what we would do.
           return __("would display \"%s\" on lcd", text)
         else
-          msg = {
-            message: message
-            title: title
-            sound: @sound
-            priority: @priority
-          }
-
           return @lcd.afterInit
             .then( => @lcd.setCursor(0, 0) )
             .then( => @lcd.print(text) ).then( => 
