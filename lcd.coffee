@@ -129,9 +129,9 @@ module.exports = (env) ->
         else
           return (
             if @state
-              @lcd.pendingOperation = @lcd.pendingOperation.off()
+              @lcd.pendingOperation = @lcd.pendingOperation.then( => @lef.on() )
             else
-              @lcd.pendingOperation = @lcd.pendingOperation.on()
+              @lcd.pendingOperation = @lcd.pendingOperation.then( => @lef.off() )
           ).then( =>
             return __("turned LCD backlight %s", (if @state then __("on") else __("off") ) )
           )
