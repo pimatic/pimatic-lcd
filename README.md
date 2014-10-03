@@ -13,8 +13,8 @@ Exampe config:
 ```json
 {
   "plugin": "lcd",
-  "bus": "/dev/i2c-1"
-  "rows": 4
+  "bus": "/dev/i2c-1",
+  "rows": 4,
   "cols": 20
 }
 ```
