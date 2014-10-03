@@ -66,7 +66,7 @@ module.exports = (env) ->
           return __("would display \"%s\" on lcd line %s", text, line)
         else
           return @lcd.pendingOperation = @lcd.pendingOperation
-            .then( => @lcd.setCursor(0, line) )
+            .then( => @lcd.setCursor(0, line-1) )
             .then( => @lcd.print(text) ).then( => 
               return __("displaying \"%s\" on lcd line %s", text, line) 
             )
