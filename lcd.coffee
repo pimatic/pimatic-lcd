@@ -2,6 +2,7 @@ module.exports = (env) ->
 
   # Require the  bluebird promise library
   Promise = env.require 'bluebird'
+  S = env.require 'string'
   M = env.matcher
   # Require the [cassert library](https://github.com/rhoot/cassert).
   assert = env.require 'cassert'
@@ -75,7 +76,7 @@ module.exports = (env) ->
           if line.length > cols
             line = line.substring(0, cols-1)
           else if line.length < cols
-            line = line + " ".repeat(cols - line.length)
+            line = S(line).padRight(cols)
 
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
