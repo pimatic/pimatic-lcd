@@ -7,7 +7,7 @@ Tested with:
 * 2004 LCD Display Module HD44780 (20x4)
 * 1602 LCD Display Module HD44780 (16x2)
 
-Exampe config:
+Example config:
 --------------
 
 ```json
