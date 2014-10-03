@@ -77,13 +77,13 @@ module.exports = (env) ->
             throw new Error("line must be between 1 and #{rows}")
 
           if text.length > cols
-            text = text.substring(0, cols-1)
+            printText = text.substring(0, cols)
           else if text.length < cols
-            text = S(text).padRight(cols).s
+            printText = S(text).padRight(cols).s
 
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
-            .then( => @lcd.print(text) ).then( => 
+            .then( => @lcd.print(printText) ).then( => 
               return __("displaying \"%s\" on lcd line %s", text, line) 
             )
       )
