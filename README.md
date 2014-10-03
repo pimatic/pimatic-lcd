@@ -1,17 +1,40 @@
-pimatic-plugin-template
-=======================
+pimatic-lcd
+===========
 
-See the [development guide](http://pimatic.org/guide/development/required-skills-readings/) for
-usage.
+pimatic support for LCD Displays using i2c serial bus.
 
-Some Tips:
+Tested with:
+* 2004 LCD Display Module HD44780 (20x4)
+* 1602 LCD Display Module HD44780 (16x2)
 
-###Adding package dependencies
-* You can add other package dependencies by running `npm install something --save`. With the `--save`
-  option npm will auto add the installed dependency in your `package.json`
-* You can always install all dependencies in the package.json with `npm install`
+Exampe config:
+--------------
 
-###Commit your changes to git
-* Add all edited files with `git add file`. For example: `git add package.json` then commit you changes 
-  with `git commit`.
-* After that you can push you commited work to github: `git push`
+```json
+{
+  "plugin": "lcd",
+  "bus": "/dev/i2c-1"
+  "rows": 4
+  "cols": 20
+}
+```
+
+Example rules:
+--------------
+
+```
+IF $syssensor.cpu changes
+THEN display "CPU: {$syssensor.cpu}%" on lcd line 1
+
+
+IF $syssensor.cpu changes or $syssensor.memory changes
+THEN display "CPU: {$syssensor.cpu}%" on lcd line 1 and display "MEM: {$syssensor.memor}MB" on lcd line 2
+
+
+IF switch is turned off
+THEN turn LCD backlight off
+
+
+IF switch is turned off
+THEN display "Bye bye" on lcd and after 5 seconds turn LCD backlight off
+```
