@@ -75,7 +75,7 @@ module.exports = (env) ->
           if line.length > cols
             line = line.substring(0, cols-1)
           else if line.length < cols
-            line = line + " ".repeat(line.length - cols)
+            line = line + " ".repeat(cols - line.length)
 
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
