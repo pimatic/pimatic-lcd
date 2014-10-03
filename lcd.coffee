@@ -11,17 +11,9 @@ module.exports = (env) ->
   class LCDPlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
-
       lcd = new LCD(@config.bus, @config.address)
       lcd.afterInit = lcd.init()
       @framework.ruleManager.addActionProvider(new LCDDisplayActionProvider @framework, lcd)
-
-  # ###Finally
-  # Create a instance of my plugin
-  lcdPlugin = new LCDPlugin
-  # and return it to the framework.
-  return lcdPlugin
-
 
   class LCDDisplayActionProvider extends env.actions.ActionProvider
   
@@ -78,3 +70,9 @@ module.exports = (env) ->
       )
 
   module.exports.LCDDisplayActionHandler = LCDDisplayActionHandler
+
+  # ###Finally
+  # Create a instance of my plugin
+  lcdPlugin = new LCDPlugin
+  # and return it to the framework.
+  return lcdPlugin
