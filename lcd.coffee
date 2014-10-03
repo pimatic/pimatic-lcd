@@ -125,15 +125,15 @@ module.exports = (env) ->
       return Promise.resolve().then( =>
         if simulate
           # just return a promise fulfilled with a description about what we would do.
-          return __("would turn LCD %s", (if state then __("on") else __("off") ) )
+          return __("would turn LCD %s", (if @state then __("on") else __("off") ) )
         else
           return (
-            if state
+            if @state
               @lcd.pendingOperation = @lcd.pendingOperation.off()
             else
               @lcd.pendingOperation = @lcd.pendingOperation.on()
           ).then( =>
-            return __("turned LCD backlight %s", (if state then __("on") else __("off") ) )
+            return __("turned LCD backlight %s", (if @state then __("on") else __("off") ) )
           )
       )
 
