@@ -17,6 +17,9 @@ module.exports = (env) ->
       @framework.ruleManager.addActionProvider(
         new LCDDisplayActionProvider @framework, lcd, @config
       )
+      @framework.ruleManager.addActionProvider(
+        new LCDBacklightActionProvider @framework, lcd, @config
+      )
 
   class LCDDisplayActionProvider extends env.actions.ActionProvider
   
@@ -73,10 +76,10 @@ module.exports = (env) ->
           unless 1 <= line <= rows
             throw new Error("line must be between 1 and #{rows}")
 
-          if line.length > cols
-            line = line.substring(0, cols-1)
-          else if line.length < cols
-            line = S(line).padRight(cols)
+          if text.length > cols
+            text = text.substring(0, cols-1)
+          else if text.length < cols
+            text = S(text).padRight(cols)
 
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
@@ -85,7 +88,57 @@ module.exports = (env) ->
             )
       )
 
+  class LCDBacklightActionProvider extends env.actions.ActionProvider
+  
+    constructor: (@framework, @lcd, @pluginConfig) ->
+      return
+
+    parseAction: (input, context) =>
+
+      state = null
+      setState = (next, match) => state = (match.trim is "on") 
+
+      m = M(input, context)
+        .match('turn ')
+        .match('the ', optional: yes)
+        .match('LCD')
+        .match(' backlight', optional: yes)
+        .match([' on', ' off'], setState)
+
+      if m.hadMatch()
+        match = m.getFullMatch()
+        assert typeof state is "boolean"
+        return {
+          token: match
+          nextInput: input.LCDBacklightHandler(match.length)
+          actionHandler: new LCDBacklightActionHandler(
+            @framework, @lcd, @pluginConfig, state
+          )
+        }
+            
+
+  class LCDBacklightActionHandler extends env.actions.ActionHandler 
+
+    constructor: (@framework, @lcd, @pluginConfig, @state) ->
+
+    executeAction: (simulate, context) ->
+      return Promise.resolve().then( =>
+        if simulate
+          # just return a promise fulfilled with a description about what we would do.
+          return __("would turn LCD %s", (if state then __("on") else __("off") ) )
+        else
+          (
+            if state
+              @lcd.pendingOperation = @lcd.pendingOperation.off()
+            else
+              @lcd.pendingOperation = @lcd.pendingOperation.on()
+          ).then( =>
+            return __("turned LCD backlight %s", (if state then __("on") else __("off") ) )
+          )
+      )
+
   module.exports.LCDDisplayActionHandler = LCDDisplayActionHandler
+  module.exports.LCDBacklightActionProvider = LCDBacklightActionProvider
 
   # ###Finally
   # Create a instance of my plugin
