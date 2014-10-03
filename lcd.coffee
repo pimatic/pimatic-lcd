@@ -31,7 +31,8 @@ module.exports = (env) ->
         .match('text ', optional: yes)
         .matchStringWithVars(setText)
         .match(" on lcd")
-        .match(" line ", (next) =>
+      if m.hadMatch()
+        m.match(" line ", (next) =>
           next.matchNumericExpression( (next, tokens) =>
             lineNumber = tokens
             m = next
