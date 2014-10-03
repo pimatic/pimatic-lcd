@@ -10,4 +10,12 @@ module.exports = {
       description: "address of the device"
       type: "number"
       default: 0x27
+    rows:
+      description: "number of rows (lines) of the LCD"
+      type: "number"
+      default: 4
+    cols: 
+      description: "number of cols (characters in a line) of the LCD"
+      type: "number"
+      default: 20
 }

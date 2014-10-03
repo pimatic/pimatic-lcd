@@ -13,7 +13,9 @@ module.exports = (env) ->
     init: (app, @framework, @config) =>
       lcd = new LCD(@config.bus, @config.address)
       lcd.pendingOperation = lcd.init()
-      @framework.ruleManager.addActionProvider(new LCDDisplayActionProvider @framework, lcd)
+      @framework.ruleManager.addActionProvider(
+        new LCDDisplayActionProvider @framework, lcd, @config
+      )
 
   class LCDDisplayActionProvider extends env.actions.ActionProvider
   
@@ -47,14 +49,14 @@ module.exports = (env) ->
           token: match
           nextInput: input.substring(match.length)
           actionHandler: new LCDDisplayActionHandler(
-            @framework, @lcd, textTokens, lineNumber
+            @framework, @lcd, @pluginConfig, textTokens, lineNumber
           )
         }
             
 
   class LCDDisplayActionHandler extends env.actions.ActionHandler 
 
-    constructor: (@framework, @lcd, @textTokens, @lineNumber) ->
+    constructor: (@framework, @lcd, @pluginConfig, @textTokens, @lineNumber) ->
 
     executeAction: (simulate, context) ->
       Promise.all( [
@@ -65,6 +67,16 @@ module.exports = (env) ->
           # just return a promise fulfilled with a description about what we would do.
           return __("would display \"%s\" on lcd line %s", text, line)
         else
+          rows = @pluginConfig.rows
+          cols = @pluginConfig.cols
+          unless 1 <= line <= rows
+            throw new Error("line must be between 1 and #{rows}")
+
+          if line.length > cols
+            line = line.substring(0, cols)
+          else if line.length < cols
+            line = line + " ".repeat(line.length - cols)
+
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
             .then( => @lcd.print(text) ).then( => 
