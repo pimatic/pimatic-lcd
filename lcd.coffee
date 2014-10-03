@@ -110,7 +110,7 @@ module.exports = (env) ->
         assert typeof state is "boolean"
         return {
           token: match
-          nextInput: input.LCDBacklightHandler(match.length)
+          nextInput: input.substring(match.length)
           actionHandler: new LCDBacklightActionHandler(
             @framework, @lcd, @pluginConfig, state
           )
@@ -127,7 +127,7 @@ module.exports = (env) ->
           # just return a promise fulfilled with a description about what we would do.
           return __("would turn LCD %s", (if state then __("on") else __("off") ) )
         else
-          (
+          return (
             if state
               @lcd.pendingOperation = @lcd.pendingOperation.off()
             else
