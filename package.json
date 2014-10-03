@@ -1,4 +1,5 @@
-{ "name": "pimatic-lcd",
+{
+  "name": "pimatic-lcd",
   "description": "Display information on an i2c lcd display",
   "author": "Oliver Schneider <oliverschneider89+sweetpi@gmail.com> (http://www.sweetpi.de)",
   "main": "lcd",
@@ -16,6 +17,7 @@
   },
   "configSchema": "lcd-config-schema.coffee",
   "dependencies": {
+    "i2c-lcd": "^1.0.0"
   },
   "peerDependencies": {
     "pimatic": "0.8.*"

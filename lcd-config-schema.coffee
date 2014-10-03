@@ -1,11 +1,13 @@
-# #my-plugin configuration options
-# Declare your config option for your plugin here. 
 module.exports = {
-  title: "my plugin config options"
+  title: "lcd plugin config options"
   type: "object"
   properties:
-    option1:
-      description: "Some option"
+    bus:
+      description: "i2c bus device"
       type: "string"
-      default: "foo"
+      default: "/dev/i2c-1"
+    address:
+      description: "address of the device"
+      type: "number"
+      default: 0x27
 }
