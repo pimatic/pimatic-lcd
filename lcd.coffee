@@ -14,7 +14,7 @@ module.exports = (env) ->
     init: (app, @framework, @config) =>
       lcd = new LCD(@config.bus, @config.address)
       lcd.pendingOperation = lcd.init()
-      @lcd._printedLines = []
+      lcd._printedLines = []
       @framework.ruleManager.addActionProvider(
         new LCDDisplayActionProvider @framework, lcd, @config
       )
