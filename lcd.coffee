@@ -103,7 +103,7 @@ module.exports = (env) ->
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, @lastLine-1) )
             .then( =>
-              printText = S(" ").repeat(@pluginConfig.rows).s
+              printText = S(" ").repeat(@pluginConfig.cols).s
               @lcd._printedLines[@lastLine-1] = printText
               return @lcd.print(printText)
             ).then( =>  __("cleared LCD line %s", @lastLine) )
