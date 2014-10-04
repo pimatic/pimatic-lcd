@@ -14,6 +14,7 @@ module.exports = (env) ->
     init: (app, @framework, @config) =>
       lcd = new LCD(@config.bus, @config.address)
       lcd.pendingOperation = lcd.init()
+      @lcd._printedLines = []
       @framework.ruleManager.addActionProvider(
         new LCDDisplayActionProvider @framework, lcd, @config
       )
@@ -67,6 +68,7 @@ module.exports = (env) ->
         @framework.variableManager.evaluateStringExpression(@textTokens)
         @framework.variableManager.evaluateNumericExpression(@lineNumber)
       ]).then( ([text, line]) =>
+        @lastLine = line
         if simulate
           # just return a promise fulfilled with a description about what we would do.
           return __("would display \"%s\" on lcd line %s", text, line)
@@ -83,10 +85,32 @@ module.exports = (env) ->
 
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
-            .then( => @lcd.print(printText) ).then( => 
-              return __("displaying \"%s\" on lcd line %s", text, line) 
-            )
+            .then( =>
+              @lastPrintText = printText
+              @lcd._printedLines[line-1] = printText # remember new text
+              return @lcd.print(printText)
+            ).then( =>  __("displaying \"%s\" on lcd line %s", text, line) )
       )
+
+    hasRestoreAction: -> yes
+    # ### executeRestoreAction()
+    executeRestoreAction: (simulate) -> 
+      if simulate
+        return Promise.resolve __("would clear LCD line %s", @lastLine)
+      else
+        # only clear if it not changed in between
+        if @lastPrintText is @lcd._printedLines[@lastLine-1]
+          return @lcd.pendingOperation = @lcd.pendingOperation
+            .then( => @lcd.setCursor(0, @lastLine-1) )
+            .then( =>
+              printText = S(" ").repeat(@pluginConfig.rows).s
+              @lcd._printedLines[@lastLine-1] = printText
+              return @lcd.print(printText)
+            ).then( =>  __("cleared LCD line %s", @lastLine) )
+        else
+          Promise.resolve  __("didn't clear LCD line %s because it changed", @lastLine)
+
+
 
   class LCDBacklightActionProvider extends env.actions.ActionProvider
   
