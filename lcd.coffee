@@ -82,6 +82,8 @@ module.exports = (env) ->
             printText = text.substring(0, cols)
           else if text.length < cols
             printText = S(text).padRight(cols).s
+          else
+            printText = text
 
           return @lcd.pendingOperation = @lcd.pendingOperation
             .then( => @lcd.setCursor(0, line-1) )
