@@ -16,7 +16,7 @@
   },
   "configSchema": "lcd-config-schema.coffee",
   "dependencies": {
-    "i2c-lcd": "^1.0.0"
+    "i2c-lcd": "^1.0.2"
   },
   "peerDependencies": {
     "pimatic": "0.8.*"
