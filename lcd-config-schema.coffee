@@ -8,8 +8,8 @@ module.exports = {
       default: "/dev/i2c-1"
     address:
       description: "address of the device"
-      type: "number"
-      default: 0x27
+      type: "string"
+      default: "0x27"
     rows:
       description: "number of rows (lines) of the LCD"
       type: "number"

@@ -4,15 +4,21 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
   S = env.require 'string'
   M = env.matcher
+  _ = env.require 'lodash'
+
   # Require the [cassert library](https://github.com/rhoot/cassert).
   assert = env.require 'cassert'
 
   LCD = require 'i2c-lcd'
 
   class LCDPlugin extends env.plugins.Plugin
+    prepareConfig: (config) =>
+      if _.isNumber config.address
+        config.address = "#{config.address}"
 
     init: (app, @framework, @config) =>
-      lcd = new LCD(@config.bus, @config.address)
+      # parseInt is used without the radix parameter to allow for, both, decimal and hexadecimal number strings
+      lcd = new LCD(@config.bus, parseInt @config.address)
       lcd.pendingOperation = lcd.init()
       lcd._printedLines = []
       @framework.ruleManager.addActionProvider(
