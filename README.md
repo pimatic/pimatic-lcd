@@ -19,17 +19,17 @@ Example config:
 }
 ```
 
-If the i2c address of the LCD Display Module is different from the default address `0x27`, the `address` property 
-needs to be set. If the address of the module is unknown the `i2cdetect` tool can be used which is part 
+If the i2c address of the LCD Display Module is different from the default address `"0x27"`, the `"address"` 
+property needs to be set. If the address of the module is unknown the `i2cdetect` tool can be used which is part 
 of the `i2c-tools` package on Raspbian. 
 Note, the addresses output by the tool are hexadecimal numbers. To set the address property of the plugin 
-accordingly, the number has to be provided as a string preceded by '0x'.
+accordingly, the number has to be provided as a string preceded by `0x`.
 
 ```json
 {
   "plugin": "lcd",
   "bus": "/dev/i2c-1",
-  "address": "0x23"
+  "address": "0x23",
   "rows": 4,
   "cols": 20
 }
