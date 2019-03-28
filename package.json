@@ -2,8 +2,10 @@
   "name": "pimatic-lcd",
   "description": "Display information on an i2c lcd display",
   "author": "Oliver Schneider <oliverschneider89+sweetpi@gmail.com> (http://www.sweetpi.de)",
+  "license": "GPL-2.0",
   "main": "lcd",
   "files": [
+    "LICENSE",
     "lcd.coffee",
     "README.md",
     "lcd-config-schema.coffee"
